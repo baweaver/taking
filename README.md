@@ -9,12 +9,26 @@ This is a very rudimentary implementation for testing, and may be expanded upon 
 Elixir allows us to pattern match on methods, this allows us to do it using Ruby's one-liner methods and argument forwarding (`...`):
 
 ```ruby
+Point = Struct.new(:x, :y)
+
 def handle_responses(...) = case Taking.from(...)
-  in 1, 2, 3  then :numbers
-  in 'a', 'b' then :strings
-  in :a, :b   then :symbols
-  else             false
+  in Point[x, 10 => y]
+    Point[x, y + 1]
+  in 1, 2, 3
+    :numbers
+  in 'a', 'b'
+    :strings
+  in :a, :b
+    :symbols
+  in x: 0, y: 0
+    :origin
+  in x: 0, y: (10..)
+    :north
+  else
+    false
 end
+
+# Array-like
 
 handle_responses(1,2,3)
 # => :numbers
@@ -25,11 +39,7 @@ handle_responses(:a, :b)
 handle_responses(:nope?)
 # => false
 
-def handle_kw_responses(...) = case Taking.from_kw(...)
-  in x: 0, y: 0    then :origin
-  in x: 0, y: 10.. then :north
-  else             false
-end
+# Hash-like
 
 handle_responses(x: 0, y: 0)
 # => :origin
@@ -37,6 +47,11 @@ handle_responses(x: 0, y: 15)
 # => :north
 handle_responses(x: 10, y: 15)
 # => :false
+
+# Deconstructable Object
+
+handle_responses(Point[1, 10])
+# => Point[1, 11]
 ```
 
 ## Installation
